@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>New Era - Moda, Média e Mediana</title>
+  <style>
+    body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(to right, #c9d6ff, #e2e2e2);
+    text-align: center;
+    padding: 20px;
+    overflow-x: hidden;
+  }
+  .card {
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    max-width: 700px;
+    margin: auto;
+    padding: 40px 30px;
+    position: relative;
+    z-index: 2;
+  }
+  button {
+    margin: 10px;
+    padding: 12px 24px;
+    border-radius: 8px;
+    border: none;
+    background-color: #5e60ce;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  button:hover {
+    background-color: #4a4fb0;
+  }
+  .feedback {
+    font-size: 18px;
+    margin-top: 15px;
+    font-weight: bold;
+    color: #333;
+  }
+  #confetti-canvas {
+    position: fixed;
+    pointer-events: none;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1;
+  }
+  
+
+
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>New Era 📊</h1>
+    <p id="instruction">Responda as questões sobre Moda, Média e Mediana!</p>
+    <div id="question"></div>
+    <div id="options"></div>
+    <p class="feedback" id="feedback"></p>
+    <button id="shareBtn" style="display:none">📤 Compartilhar no WhatsApp</button>
+    <canvas id="confetti-canvas"></canvas>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+  <script>
+const questions = [
+    {
+      question: "Qual é a moda da seguinte série de dados: 3, 5, 5, 7, 9?",
+      options: ["3", "5", "7"],
+      answer: "5"
+    },
+    {
+      question: "Qual é a média dos seguintes valores: 4, 8, 6, 10, 2?",
+      options: ["6", "7", "8"],
+      answer: "6"
+    },
+    {
+      question: "Qual é a mediana da sequência: 1, 3, 3, 6, 7, 8, 9?",
+      options: ["3", "6", "7"],
+      answer: "6"
+    }
+  ];
+  
+  let current = 0;
+  
+  function loadQuestion() {
+    const q = questions[current];
+    document.getElementById('feedback').textContent = '';
+    document.getElementById('question').textContent = q.question;
+    document.getElementById('shareBtn').style.display = 'none';
+  
+    const optionsDiv = document.getElementById('options');
+    optionsDiv.innerHTML = '';
+    q.options.forEach(option => {
+      const btn = document.createElement('button');
+      btn.textContent = option;
+      btn.onclick = () => checkAnswer(option);
+      optionsDiv.appendChild(btn);
+    });
+  }
+  
+  function launchConfetti() {
+    const duration = 2 * 1000;
+    const end = Date.now() + duration;
+  
+    (function frame() {
+      confetti({
+        particleCount: 5,
+        angle: 60,
+        spread: 60,
+        origin: { x: 0 }
+      });
+      confetti({
+        particleCount: 5,
+        angle: 120,
+        spread: 60,
+        origin: { x: 1 }
+      });
+      if (Date.now() < end) {
+        requestAnimationFrame(frame);
+      }
+    })();
+  }
+  
+  function checkAnswer(selected) {
+    const q = questions[current];
+    const feedback = document.getElementById('feedback');
+    const shareBtn = document.getElementById('shareBtn');
+  
+    if (selected === q.answer) {
+      feedback.textContent = '✅ Correto! Muito bem!';
+      launchConfetti();
+      shareBtn.style.display = 'inline-block';
+    } else {
+      feedback.textContent = '❌ Errado. A resposta correta era: ' + q.answer + '.';
+    }
+  
+    shareBtn.onclick = () => {
+      const text = `Acabei de acertar uma pergunta sobre estatística no jogo New Era 📊! Tente também! https://teuseusite.com`;
+      const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
+      window.open(url, '_blank');
+    };
+  
+    setTimeout(() => {
+      current = (current + 1) % questions.length;
+      loadQuestion();
+    }, 4000);
+  }
+  
+  loadQuestion();
+  
+
+  </script>
+</body>
+</html>
+
